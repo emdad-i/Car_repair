@@ -6,11 +6,14 @@ import json
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 st.title('Car Repair Assistant')
-st.write('Ask me how to repair your car!')
 
-user_input = st.text_input('Describe your car issue')
+# Create a container for the chat messages
+chat_container = st.beta_container()
+
+user_input = st.text_input('Describe your car issue', key="user_input")
 
 if user_input:
+    # Send the user message to the API
     headers = {
         'Authorization': f'Bearer {openai_api_key}',
         'Content-Type': 'application/json',
@@ -26,4 +29,8 @@ if user_input:
 
     response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, data=json.dumps(data))
     response_json = response.json()
-    st.write(response_json)
+    answer = response_json['choices'][0]['message']['content']
+
+    # Display the conversation in the chat container
+    with chat_container:
+        st.text_area("Conversation", value=f"You: {user_input}\nAI: {answer}", height=300, disabled=True)
