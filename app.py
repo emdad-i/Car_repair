@@ -36,4 +36,11 @@ user_input = st.chat_input('Describe your car issue', key="user_input")
 if user_input:
     st.session_state.chat_history.append({'message': user_input, 'is_user': True})
     answer = send_message(user_input)
-    st.session_state.chat_history.append
+    st.session_state.chat_history.append({'message': answer, 'is_user': False})
+
+# Display the chat history
+for chat in st.session_state.chat_history:
+    if chat['is_user']:
+        st.chat_message(chat['message'], is_user=True)
+    else:
+        st.chat_message(chat['message'])
