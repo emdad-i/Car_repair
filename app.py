@@ -6,13 +6,11 @@ import json
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 st.title('Car Repair Assistant')
+st.write('Ask me how to repair your car!')
 
-# Initialize session state for chat history if it doesn't exist
-if 'chat_history' not in st.session_state:
-    st.session_state.chat_history = []
+user_input = st.text_input('Describe your car issue')
 
-# Function to send messages to the LLM and get responses
-def send_message(message):
+if user_input:
     headers = {
         'Authorization': f'Bearer {openai_api_key}',
         'Content-Type': 'application/json',
@@ -22,25 +20,11 @@ def send_message(message):
         "model": "gpt-4",
         "messages": [
             {"role": "system", "content": "I am an AI trained to help with car repairs."},
-            {"role": "user", "content": message}
+            {"role": "user", "content": user_input}
         ]
     }
 
     response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, data=json.dumps(data))
-    return response.json()['choices'][0]['message']['content']
-
-# Chat input for user to type their message
-user_input = st.chat_input('Describe your car issue', key="user_input")
-
-# When the user sends a message, add it to the chat history and get a response
-if user_input:
-    st.session_state.chat_history.append({'message': user_input, 'is_user': True})
-    answer = send_message(user_input)
-    st.session_state.chat_history.append({'message': answer, 'is_user': False})
-
-# Display the chat history
-for chat in st.session_state.chat_history:
-    if chat['is_user']:
-        st.chat_message(chat['message'], is_user=True)
-    else:
-        st.chat_message(chat['message'])
+    response_json = response.json()
+    
+    st.write(response_json['choices'][0]['message']['content'])
