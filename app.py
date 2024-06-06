@@ -17,7 +17,7 @@ if user_input:
     }
 
     data = {
-        "model": "gpt-4",
+        "model": "gpt-4o",
         "messages": [
             {"role": "system", "content": "I am an AI trained to help with car repairs."},
             {"role": "user", "content": user_input}
