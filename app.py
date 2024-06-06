@@ -1,9 +1,9 @@
 import streamlit as st
-import openai
+import requests
+import json
 
 # Assuming you have set up OpenAI API key in your environment variables
 openai_api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = openai_api_key
 
 st.title('Car Repair Assistant')
 st.write('Ask me how to repair your car!')
@@ -11,10 +11,18 @@ st.write('Ask me how to repair your car!')
 user_input = st.text_input('Describe your car issue')
 
 if user_input:
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "system", "content": "I am an AI trained to help with car repairs."},
-                  {"role": "user", "content": user_input}]
-    )
-    
-    st.write(response['choices'][0]['message']['content'])
+    headers = {
+        'Authorization': f'Bearer {openai_api_key}',
+        'Content-Type': 'application/json',
+    }
+
+    data = {
+        "model": "gpt-4",
+        "messages": [
+            {"role": "system", "content": "I am an AI trained to help with car repairs."},
+            {"role": "user", "content": user_input}
+        ]
+    }
+
+    response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, data=json.dumps(data))
+    response_json = response.json()
