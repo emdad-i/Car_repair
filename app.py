@@ -26,3 +26,4 @@ if user_input:
 
     response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, data=json.dumps(data))
     response_json = response.json()
+    st.write(response_json)
